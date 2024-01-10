@@ -45,4 +45,8 @@ client = HunterHelper(<your API key>)
 email_by_domain_first_last_name = client.get_email_by_domain_first_last_name('reddit.com', 'Alexis', 'Ohanian')
 emails_by_domain = client.get_emails_by_domain('stripe.com')
 email_verified = client.verify_email('patrik@stripe.com')
+
+# to check saved data
+
+all data = client.get_all_data()
 ```
