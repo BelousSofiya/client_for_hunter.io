@@ -56,10 +56,3 @@ class HunterHelper(object):
     def get_all_data(self) -> Dict[str, MainDataDict]:
         """Get all stored emails data."""
         return self.data_store.own_data
-
-
-if __name__ == '__main__':
-    client = HunterHelper('e93c41dd45281f55bbb854ec1e86719c50b90d5d')
-    email_by_domain_first_last_name = client.get_email_by_domain_first_last_name('reddit.com', 'Alexis', 'Ohanian')
-    emails_by_domain = client.get_emails_by_domain('stripe.com')
-    email_verified = client.verify_email('patrik@stripe.com')
