@@ -3,14 +3,14 @@ from unittest.mock import Mock, patch
 
 from requests.exceptions import HTTPError, JSONDecodeError
 
-from api_client import HunterClient
-from exceptions import HunterClientDataError, HunterClientHTTPError
+from hunter_helper.hunter_api_client import HunterClient
+from hunter_helper.exceptions import HunterClientDataError, HunterClientHTTPError
 
 
 class GetTests(TestCase):
 
     def setUp(self):
-        request_patcher = patch('api_client.requests')
+        request_patcher = patch('hunter_helper.hunter_api_client.requests')
         self.mock_request = request_patcher.start()
         self.mock_response = Mock()
         self.mock_request.get.return_value = self.mock_response

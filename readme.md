@@ -31,22 +31,11 @@ setup.cfg https://gist.github.com/dfirst/0957711a40d640d335e128eec4c17f21
 
 ### Check types:
 
-- python -m mypy parsers.py main.py data_storage.py api_client.py exceptions.py
+- python -m mypy -p hunter_helper
+- python -m mypy main.py data_storage.py
 
 ### Usage example:
 
 - Create account on [hunter.io](https://hunter.io) and get API key
 
-```
-client = HunterHelper(<your API key>)
-
-# to get data from hunter.io
-
-email_by_domain_first_last_name = client.get_email_by_domain_first_last_name('reddit.com', 'Alexis', 'Ohanian')
-emails_by_domain = client.get_emails_by_domain('stripe.com')
-email_verified = client.verify_email('patrik@stripe.com')
-
-# to check saved data
-
-all data = client.get_all_data()
-```
+- python -m main

@@ -3,7 +3,7 @@
 import requests
 from requests.exceptions import HTTPError, JSONDecodeError
 
-from exceptions import HunterClientDataError, HunterClientHTTPError
+from hunter_helper.exceptions import HunterClientDataError, HunterClientHTTPError
 
 
 class HunterClient(object):

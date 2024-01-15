@@ -1,13 +1,17 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from exceptions import HunterClientDataError
-from parsers import parse_emails_by_domain_data, parse_email_by_domain_first_last_name_data, parse_verify_email_data
+from hunter_helper.exceptions import HunterClientDataError
+from hunter_helper.parsers import (
+    parse_emails_by_domain_data,
+    parse_email_by_domain_first_last_name_data,
+    parse_verify_email_data,
+)
 
 
 class ParseEmailsByDomainDataTests(TestCase):
 
-    @patch("parsers.uuid4")
+    @patch("hunter_helper.parsers.uuid4")
     def test_success(self, mock_uuid):
         test_data = {
             'data': {
@@ -45,7 +49,7 @@ class ParseEmailsByDomainDataTests(TestCase):
 
 class ParseEmailByDomainFirstLastNameDataTests(TestCase):
 
-    @patch("parsers.uuid4")
+    @patch("hunter_helper.parsers.uuid4")
     def test_success(self, mock_uuid):
         test_data = {'data':  {
             'email': 'test_email_1',
@@ -73,11 +77,12 @@ class ParseVerifyEmailDataTests(TestCase):
 
     def test_success(self):
         test_data = {"data": {
+            "email": "test_email_1",
             "status": "accept_all",
             "result": "risky"}}
 
         actual = parse_verify_email_data(test_data)
-        expected = {'email_status': 'accept_all', 'email_result': 'risky'}
+        expected = {'test_email_1': {'email_status': 'accept_all', 'email_result': 'risky'}}
 
         self.assertEqual(expected, actual)
 
