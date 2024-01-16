@@ -36,7 +36,7 @@ class GetTests(TestCase):
 
         self.mock_response.raise_for_status.side_effect = HTTPError(response=resp)
 
-        with self.assertRaises(HunterClientHTTPError):
+        with self.assertRaises(HTTPError):
             self.subject.get(self.test_path, self.test_props)
 
     def test_not_json_response_body_rises_exception(self):
@@ -44,5 +44,5 @@ class GetTests(TestCase):
         self.mock_response.return_value = test_response_payload
         self.mock_response.raise_for_status.side_effect = JSONDecodeError('Opps!', 'doc', 0)
 
-        with self.assertRaises(HunterClientDataError):
+        with self.assertRaises(JSONDecodeError):
             self.subject.get(self.test_path, self.test_props)

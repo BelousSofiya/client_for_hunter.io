@@ -38,19 +38,47 @@ class HunterHelper(object):
         response = self.hunter_client.get(path, url_params)
         return parser(response)
 
-    def get_emails_by_domain(self, domain: str) -> expected_dict:
+
+class EmailsByDomain(HunterHelper):
+    """Endpoint for getting emails by domain."""
+
+    def __init__(self, api_key: str) -> None:
+        """Init EmailsByDomain class with path and parser."""
+        self.path = 'domain-search'
+        self.parser = parse_emails_by_domain_data
+        super().__init__(api_key)
+
+    def execute(self, domain: str) -> expected_dict:
         """Look for emails by specified domain."""
         params_for_url = {'domain': domain, 'api_key': self.api_key}
-        return self.execute_request_template('domain-search', params_for_url, parse_emails_by_domain_data)
+        return self.execute_request_template(self.path, params_for_url, self.parser)
 
-    def get_email_by_domain_first_last_name(
-        self, domain: str, first_name: str, last_name: str,
-    ) -> expected_dict:
+
+class EmailByDomainFirstLastName(HunterHelper):
+    """Endpoint for getting emails by domain, first, last names."""
+
+    def __init__(self, api_key: str) -> None:
+        """Init EmailByDomainFirstLastName class with path and parser."""
+        self.path = 'email-finder'
+        self.parser = parse_email_by_domain_first_last_name_data
+        super().__init__(api_key)
+
+    def execute(self, domain: str, first_name: str, last_name: str) -> expected_dict:
         """Look for email by specified domain, first name, last name."""
         params_for_url = {'domain': domain, 'first_name': first_name, 'last_name': last_name, 'api_key': self.api_key}
-        return self.execute_request_template('email-finder', params_for_url, parse_email_by_domain_first_last_name_data)
+        return self.execute_request_template(self.path, params_for_url, self.parser)
 
-    def verify_email(self, email: str) -> dict[str, ParserDict] | dict[str, UpdateDict]:
+
+class EmailVerification(HunterHelper):
+    """Endpoint for verifying email."""
+
+    def __init__(self, api_key: str) -> None:
+        """Init EmailVerification class with path and parser."""
+        self.path = 'email-verifier'
+        self.parser = parse_verify_email_data
+        super().__init__(api_key)
+
+    def execute(self, email: str) -> dict[str, ParserDict] | dict[str, UpdateDict]:
         """Verify specified email address accessibility."""
         params_for_url = {'email': email, 'api_key': self.api_key}
-        return self.execute_request_template('email-verifier', params_for_url, parse_verify_email_data)
+        return self.execute_request_template(self.path, params_for_url, self.parser)
