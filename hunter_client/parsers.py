@@ -1,14 +1,13 @@
-"""Parsers for hunter_helper.py."""
+"""Parsers for hunter_client.py."""
 
 from typing import Dict
 from uuid import uuid4
 
-from data_storage_types import UpdateDict
-from hunter_helper.exceptions import HunterClientDataError
-from hunter_helper.hunter_client_types import ParserDict
+from hunter_client.exceptions import HunterClientDataError
+from hunter_client.hunter_client_types import EmailAccessData, EmailBaseData
 
 
-def parse_emails_by_domain_data(response: dict) -> Dict[str, ParserDict]:
+def parse_emails_by_domain_data(response: dict) -> Dict[str, EmailBaseData]:
     """Parser for get emails by domain method."""
     try:
         return _parse_emails_by_domain_data(response)
@@ -16,8 +15,8 @@ def parse_emails_by_domain_data(response: dict) -> Dict[str, ParserDict]:
         raise HunterClientDataError('Failed to parse hunter.io response')
 
 
-def _parse_emails_by_domain_data(response: dict) -> Dict[str, ParserDict]:
-    new_emails_dict: Dict[str, ParserDict] = {}
+def _parse_emails_by_domain_data(response: dict) -> Dict[str, EmailBaseData]:
+    new_emails_dict: Dict[str, EmailBaseData] = {}
 
     for email in response['data']['emails']:
         domains = []
@@ -30,7 +29,7 @@ def _parse_emails_by_domain_data(response: dict) -> Dict[str, ParserDict]:
     return new_emails_dict
 
 
-def parse_email_by_domain_first_last_name_data(response: dict) -> Dict[str, ParserDict]:
+def parse_email_by_domain_first_last_name_data(response: dict) -> Dict[str, EmailBaseData]:
     """Parser for get email by domain, first, last name method."""
     try:
         return _parse_email_by_domain_first_last_name_data(response)
@@ -38,7 +37,7 @@ def parse_email_by_domain_first_last_name_data(response: dict) -> Dict[str, Pars
         raise HunterClientDataError('Failed to parse hunter.io response')
 
 
-def _parse_email_by_domain_first_last_name_data(response: dict) -> Dict[str, ParserDict]:
+def _parse_email_by_domain_first_last_name_data(response: dict) -> Dict[str, EmailBaseData]:
     domains = []
     for source in response['data']['sources']:
         domains.append(source['domain'])
@@ -46,7 +45,7 @@ def _parse_email_by_domain_first_last_name_data(response: dict) -> Dict[str, Par
     return {response['data']['email']: {'id': email_id, 'domains': domains}}
 
 
-def parse_verify_email_data(response: dict) -> dict[str, UpdateDict]:
+def parse_verify_email_data(response: dict) -> dict[str, EmailAccessData]:
     """Parser for verify email method."""
     try:
         return _parse_verify_email_data(response)
@@ -54,7 +53,7 @@ def parse_verify_email_data(response: dict) -> dict[str, UpdateDict]:
         raise HunterClientDataError('Failed to parse hunter.io response')
 
 
-def _parse_verify_email_data(response: dict) -> Dict[str, UpdateDict]:
+def _parse_verify_email_data(response: dict) -> Dict[str, EmailAccessData]:
     email = response['data']['email']
     status_from_response = response['data']['status']
     result_from_response = response['data']['result']

@@ -1,29 +1,28 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from hunter_helper.hunter_helper import HunterHelper, EmailsByDomain, EmailByDomainFirstLastName, EmailVerification
+from hunter_client.endpoints import EndpointFactory
 
 
 class FunctionalTestsHelper(TestCase):
 
     def setUp(self):
-        client_patcher = patch('hunter_helper.hunter_helper.HunterClient')
-        self.mock_client_get = client_patcher.start().return_value.get
+        client_patcher = patch('hunter_client.endpoints.HunterClient')
+        self.mock_client_get = client_patcher.start().return_value.send_request
         self.addCleanup(client_patcher.stop)
 
-        uuid_patcher = patch('hunter_helper.parsers.uuid4')
+        uuid_patcher = patch('hunter_client.parsers.uuid4')
         mock_uuid = uuid_patcher.start()
         mock_uuid.side_effect = [
             'f26d75e4-3bb7-41c0-8e87-87aea01bd953',
             '5606bdab-ab9d-4354-a974-fbe870a54101',
-            # '3d66b9cf-16c8-446d-bffb-a327e0b7748a',
         ]
 
         test_api_key = 'test_api_key'
-        self.subject = HunterHelper(test_api_key)
-        self.subject1 = EmailsByDomain(test_api_key)
-        self.subject2 = EmailByDomainFirstLastName(test_api_key)
-        self.subject3 = EmailVerification(test_api_key)
+        self.factory = EndpointFactory(test_api_key)
+        self.domain_search = self.factory.get_endpoint('domain-search')
+        self.email_finder = self.factory.get_endpoint('email-finder')
+        self.email_verifier = self.factory.get_endpoint('email-verifier')
 
 
 class EmailsByDomainTests(FunctionalTestsHelper):
@@ -48,14 +47,19 @@ class EmailsByDomainTests(FunctionalTestsHelper):
                 ]
             }
         }
-        self.assertEqual(
-            {'test_email_1': {'id': 'f26d75e4-3bb7-41c0-8e87-87aea01bd953',
-                              'domains': ['test_domain_1', 'test_domain_2']},
-             'test_email_2': {'id': '5606bdab-ab9d-4354-a974-fbe870a54101', 'domains': [
-                 'test_domain_3']}}
-            ,
-            self.subject1.execute(test_domain)
-        )
+        expected = {
+            'test_email_1': {
+                'id': 'f26d75e4-3bb7-41c0-8e87-87aea01bd953',
+                'domains': ['test_domain_1', 'test_domain_2']
+            },
+            'test_email_2': {
+                'id': '5606bdab-ab9d-4354-a974-fbe870a54101',
+                'domains': ['test_domain_3']
+            }
+        }
+        actual = self.domain_search.execute('GET', test_domain)
+
+        self.assertEqual(expected, actual)
 
 
 class EmailByDomainFirstLastNameTests(FunctionalTestsHelper):
@@ -72,11 +76,14 @@ class EmailByDomainFirstLastNameTests(FunctionalTestsHelper):
                 'sources': [{'domain': 'test_domain_3'}]
             }
         }
+        expected = {'test_email_3': {
+            'id': 'f26d75e4-3bb7-41c0-8e87-87aea01bd953',
+            'domains': ['test_domain_3']
+            }
+        }
+        actual = self.email_finder.execute('GET', test_domain, test_first_name, test_last_name)
 
-        self.assertEqual(
-            {'test_email_3': {'id': 'f26d75e4-3bb7-41c0-8e87-87aea01bd953', 'domains': ['test_domain_3']}},
-            self.subject2.execute(test_domain, test_first_name, test_last_name)
-        )
+        self.assertEqual(expected, actual)
 
 
 class VerificationEmailTests(FunctionalTestsHelper):
@@ -87,7 +94,14 @@ class VerificationEmailTests(FunctionalTestsHelper):
         self.mock_client_get.return_value = {
             'data': {'email': test_email, 'status': 'good', 'result': 'positive)'}
         }
-        self.assertEqual(
-            {test_email: {'email_status': 'good', 'email_result': 'positive)'}},
-            self.subject3.execute(test_email)
-        )
+
+        expected = {test_email: {'email_status': 'good', 'email_result': 'positive)'}}
+        actual = self.email_verifier.execute('GET', test_email)
+        self.assertEqual(expected, actual)
+
+
+class NotImplementedEndpointTests(FunctionalTestsHelper):
+
+    def test_not_implemented_endpoint(self):
+        with self.assertRaises(NotImplementedError):
+            self.factory.get_endpoint('not-implemented')

@@ -1,9 +1,8 @@
 """Class to store emails data."""
 
-from data_storage_types import UpdateDict
-from hunter_helper.hunter_client_types import ParserDict
+from hunter_client.hunter_client_types import EmailAccessData, EmailBaseData
 
-expected_dict = dict[str, ParserDict] | dict[str, UpdateDict]
+expected_dict = dict[str, EmailBaseData] | dict[str, EmailAccessData]
 
 
 class ClientDataStore(object):

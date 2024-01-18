@@ -3,3 +3,4 @@ wemake-python-styleguide==0.18.0
 mypy==1.8.0
 types-requests==2.31.0.20240106
 flake8==7.0.0
+abcmeta==2.2.0

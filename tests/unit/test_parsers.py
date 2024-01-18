@@ -1,8 +1,8 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from hunter_helper.exceptions import HunterClientDataError
-from hunter_helper.parsers import (
+from hunter_client.exceptions import HunterClientDataError
+from hunter_client.parsers import (
     parse_emails_by_domain_data,
     parse_email_by_domain_first_last_name_data,
     parse_verify_email_data,
@@ -11,7 +11,7 @@ from hunter_helper.parsers import (
 
 class ParseEmailsByDomainDataTests(TestCase):
 
-    @patch("hunter_helper.parsers.uuid4")
+    @patch("hunter_client.parsers.uuid4")
     def test_success(self, mock_uuid):
         test_data = {
             'data': {
@@ -49,7 +49,7 @@ class ParseEmailsByDomainDataTests(TestCase):
 
 class ParseEmailByDomainFirstLastNameDataTests(TestCase):
 
-    @patch("hunter_helper.parsers.uuid4")
+    @patch("hunter_client.parsers.uuid4")
     def test_success(self, mock_uuid):
         test_data = {'data':  {
             'email': 'test_email_1',
